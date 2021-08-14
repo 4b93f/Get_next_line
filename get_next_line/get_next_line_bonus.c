@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chly-huc <chly-huc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/08 10:29:20 by chly-huc          #+#    #+#             */
-/*   Updated: 2020/02/01 00:41:31 by chly-huc         ###   ########.fr       */
+/*   Updated: 2021/04/23 16:51:21 by chly-huc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-int		find_end_string(char *str)
+int	find_end_string(char *str)
 {
 	int	i;
 
@@ -40,7 +40,8 @@ char	*get_l(char *string)
 		return (NULL);
 	while (string[i] && string[i] != '\n')
 		i++;
-	if (!(ligne = ft_substr(string, 0, i)))
+	ligne = ft_substr(string, 0, i);
+	if (!ligne)
 		return (NULL);
 	while (j < i)
 	{
@@ -57,9 +58,11 @@ char	*readline(int fd, char *string)
 	int		ret;
 	char	*temp;
 
+	ret = 1;
 	temp = NULL;
-	while ((ret = read(fd, buf, BUFFER_SIZE)) > 0)
+	while (ret > 0)
 	{
+		ret = read(fd, buf, BUFFER_SIZE);
 		buf[ret] = '\0';
 		string = ft_strjoin(string, buf);
 		if (find_end_string(buf))
@@ -80,7 +83,9 @@ char	*rest(char *strings)
 		return (NULL);
 	while (strings[i] && strings[i] != '\n')
 		i++;
-	tmp = malloc(sizeof(char*) * ft_strlen(strings));
+	tmp = malloc(sizeof(char *) * ft_strlen(strings));
+	if (!tmp)
+		return (NULL);
 	while (strings[i])
 	{
 		tmp[j] = strings[i + 1];
@@ -91,9 +96,9 @@ char	*rest(char *strings)
 	return (tmp);
 }
 
-int		get_next_line(int fd, char **line)
+int	get_next_line(int fd, char **line)
 {
-	static	char	*str[OPEN_MAX];
+	static char	*str[FOPEN_MAX];
 
 	*line = NULL;
 	if (check_error(fd, str[fd]) < 0 || BUFFER_SIZE < 1)

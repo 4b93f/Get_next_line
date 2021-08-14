@@ -6,32 +6,41 @@
 /*   By: chly-huc <chly-huc@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/01/08 11:24:12 by chly-huc          #+#    #+#             */
-/*   Updated: 2020/01/31 21:57:14 by chly-huc         ###   ########.fr       */
+/*   Updated: 2021/04/23 16:54:05 by chly-huc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		check_error(int fd, char *str)
+int	check_error(int fd, char *str)
 {
 	int		i;
-	char	buf[BUFFER_SIZE + 1];
+	char	*buf;
 
-	i = 0;
-	if (fd < 0 || read(fd, buf, 0) < 0)
-		return (-1);
+	i = -1;
 	if (!str)
 		return (1);
-	while (str[i])
+	buf = malloc(sizeof(char) * BUFFER_SIZE + 1);
+	if (!buf)
+		return (0);
+	if (fd < 0 || read(fd, buf, 0) < 0)
+	{
+		free(buf);
+		return (-1);
+	}
+	while (str[++i])
 	{
 		if (str[i] == '\0')
+		{
+			free(buf);
 			return (0);
-		i++;
+		}
 	}
+	free(buf);
 	return (1);
 }
 
-size_t	ft_strlen(char *str)
+size_t	ft_strlen1(char *str)
 {
 	int	i;
 
@@ -43,15 +52,17 @@ size_t	ft_strlen(char *str)
 	return (i);
 }
 
-char	*ft_strdup(char *src)
+char	*ft_strdup1(char *src)
 {
 	char	*dest;
 	int		i;
 
 	i = 0;
+	dest = NULL;
 	if (!src)
 		return (0);
-	if (!((dest = (char *)malloc(sizeof(char) * ft_strlen(src) + 1))))
+	dest = (char *)malloc(sizeof(char) * ft_strlen1(src) + 1);
+	if (!dest)
 		return (NULL);
 	i = 0;
 	while (src[i])
@@ -63,7 +74,7 @@ char	*ft_strdup(char *src)
 	return (dest);
 }
 
-char	*ft_substr(char const *s, unsigned int start, size_t len)
+char	*ft_substr1(char const *s, unsigned int start, size_t len)
 {
 	int		i;
 	int		j;
@@ -73,7 +84,8 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	j = 0;
 	if (!s)
 		return (NULL);
-	if (!(newstr = malloc(sizeof(char) * len + 1)))
+	newstr = malloc(sizeof(char) * len + 1);
+	if (!newstr)
 		return (NULL);
 	while (start--)
 		i++;
@@ -85,7 +97,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (newstr);
 }
 
-char	*ft_strjoin(char *s1, char *s2)
+char	*ft_strjoin1(char *s1, char *s2)
 {
 	char	*tab;
 	int		i;
@@ -94,9 +106,10 @@ char	*ft_strjoin(char *s1, char *s2)
 	i = -1;
 	j = -1;
 	if (!s1)
-		return (ft_strdup(s2));
-	if (!(tab = malloc(sizeof(char) * ft_strlen((char*)s1)
-					+ ft_strlen((char*)s2) + 1)))
+		return (ft_strdup1(s2));
+	tab = malloc(sizeof(char) * ft_strlen1((char *)s1)
+			+ ft_strlen1((char *)s2) + 1);
+	if (!tab)
 		return (NULL);
 	while (s1[++i])
 		tab[i] = s1[i];
